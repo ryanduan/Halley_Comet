@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta property="wb:webmaster" content="4f9f3b0351dcb027"/>
+<title> {% block title %} Halley Comet {% endblock %}</title>
+<link href="/static/hc_share.css" rel="stylesheet" type="text/css"> 
+<style>
+@import url('/static/reset.css');
+</style>
+</head>
+<body>
+{% block body %}
+<div class="main">{% block main %}
+	<div id="header">{% block header %}
+
+    <div style="float:right" >{% block nav %}
+	{% if user.username %}
+	{{user.username}}  <a href="/logout/">注销</a>
+	<div class="logout_btn" id="logout_btn"></div>
+    {% else %}
+        <a href="/regist/" >注册</a>
+        <a href="/login/" >登录</a>
+        <div class="qq_account_log" id="qq_account_log" >
+        <a class="login_btn login_btn02" id="login_btn" href="javascript:;"></a>
+        <div class="logout_btn" id="logout_btn"></div>
+        </div>
+	{% endif %}
+		{% endblock %}
+    
+    </div>
+	<div style="float:left;" ><img src="/static/t.jpg" height="60px;"/></div>
+	<div style="margin-left:140px;" >
+	<br />
+	<h2>哈雷彗星项目组：最佳五人组</h2>
+	<h5>Halley's Comet Project Develop Team : TopFive</h5>
+	</div>
+	{% endblock %}
+{% endblock %}	
+</div><hr />
+<div id="content">
+{% block content %}
+<div id="searchinfo" >
+	<form method="post" >
+	{{lu.as_p}}
+	<input id="searchbtn" type="submit" value="缩短" />
+	</form>
+{%  endblock%}
+</div>
+
+<div id="returninfo">{% block returninfo%}
+<h2>缩短以后的域名：</h2><br />
+
+<div id="nowinfo"><a  id="js_get_short_url" href="{{long_url}}" >{{short_url}}</a></div>
+
+<div>
+<input id="J_copy_clipboard_data" type="button" value="copy" />
+{% endblock %}
+</div>
+<div id="nowinfobtn">
+</div>
+</div>
+
+	<div class="demo">
+		<a class="share" style=" width:100px; text-align:center; line-height:30px; height:30px; margin:10px auto;font-size:16px; display:block; text-decoration:none; padding:10px; border:1px dashed #cfcfcf;" href="javascript:void(0)">分享</a>
+
+	</div><hr />
+</div>
+<div id="footer">{% block footer%}
+<br />
+<h2>哈雷彗星项目组：最佳五人组</h2>
+<h5>Halley's Comet Project Develop Team : TopFive</h5>{% endblock%}
+
+</div>
+</div>
+{% block ex%}{% endblock %}
+<script src="http://mat1.gtimg.com/app/openjs/openjs.js"></script>
+<script type="text/javascript" src="/static/ZeroClipboard.js"></script>
+<script type="text/javascript" src="/static/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jzclip.js"></script>
+<script language="javascript">
+$(document).ready(function(){
+	if($("#js_get_short_url").html()==""){
+		$("#J_copy_clipboard_data").hide();
+	}
+	else{
+		$("#J_copy_clipboard_data").show();
+	}
+	});
+</script>
+<script type="text/javascript" src="/static/hc_share.js"></script>
+<script defer="defer">
+var login_btn = document.getElementById("login_btn"),
+logout_btn = document.getElementById("logout_btn");
+function login(){
+T.login(function(loginStatus){
+getUserInfo();
+login_btn.style.display = "none"
+logout_btn.style.display = "inline-block";
+},function(loginError){
+alert(loginError.message);
+});
+}
+function logout(){
+logout_btn.style.display = "none";
+login_btn.style.display = "inline-block";
+T.logout();
+}
+function getUserInfo(){
+T.api("/user/info")
+.success(function(response){
+if(response.ret === 0){
+var html="",imgsrc="",data=response.data;
+html = '<a class="head_img" href="http://t.qq.com/'+ data.name +'" target="_blank"><img src="'+ imgsrc +'" /></a><span class="logout_right"><a class="nick_text" href="http://t.qq.com/' + data.name +'" target="_blank" title="'+data.nick +'">'+ data.nick +'</a><a class="logout_text" id="logout_text"　href="javascript:void(0);">退出</a></span>';
+logout_btn.innerHTML = html;
+var logout_text = document.getElementById("logout_text");
+logout_text.onclick = logout;
+}else{
+              alert(response.ret);
+}
+})
+.error(function(code,message){
+alert(message);
+});
+}
+function init(){
+T.init({appkey:801391477});
+if(!T.loginStatus()){
+login_btn.style.display = "inline-block";
+logout_btn.style.display = "none";
+}else{
+getUserInfo();
+login_btn.style.display = "none";
+logout_btn.style.display = "inline-block";
+}
+login_btn.onclick = login;
+}
+init();
+</script>
+{% endblock %}
+</body>
+</html>
